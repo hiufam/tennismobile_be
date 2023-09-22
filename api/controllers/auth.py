@@ -31,7 +31,12 @@ def verify_otp():
     
     user : User = session.query(User).filter(User.phone_number == phone_number).scalar()
 
-    if not user.isValidOtp(otp_code) or not user:
+    if not user:
+        return jsonify({
+            'error': 'Invalid OTP'
+        }), 400
+
+    if not user.isValidOtp(otp_code):
         return jsonify({
             'error': 'Invalid OTP'
         }), 400
