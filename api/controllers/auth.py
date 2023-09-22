@@ -1,5 +1,3 @@
-import datetime
-
 from flask import Blueprint, jsonify, request
 
 from ..models.user import User
@@ -32,6 +30,9 @@ def verify_otp():
     phone_number = request.json['phone_number']
     
     user : User = session.query(User).filter(User.phone_number == phone_number).scalar()
+
+    if not user:
+        return jsonify(), 200
 
     if not user.isValidOtp(otp_code):
         return jsonify({
