@@ -7,6 +7,7 @@ class BaseModel(DeclarativeBase):
 # Have to import in order to create table 
 # And import first to avoid circular import
 from .user import User
-from .club import Club
+# from .club import Club
 
-BaseModel.metadata.create_all(engine)
+# Comment out to create table with alembic
+# BaseModel.metadata.create_all(engine) 
