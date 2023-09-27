@@ -1,24 +1,27 @@
-import datetime
-import re
-import random
-import string
+import datetime, re, random, string, enum
 
 from sqlalchemy.orm import validates, relationship
-from sqlalchemy import Column, Date, ForeignKey, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Date, ForeignKey, Integer, String, DateTime, Boolean, Enum
 
 from ..database import engine, session
 from ..models import BaseModel
+
+class Gender(enum.Enum):
+    OTHER = 0
+    MALE = 1
+    FEMALE = 2
+    UNDEFINED = 99
 
 class User(BaseModel):
     __tablename__ ='users'
 
     id = Column(Integer, primary_key=True)
-    phone_number = Column(Integer, nullable=False, unique=True)
+    phone_number = Column(String(10), nullable=False, unique=True)
     facebook_account = Column(String(50), nullable=True)
     google_account = Column(String(50), nullable=True)
     full_name = Column(String, nullable=True)
     date_of_birth = Column(Date, nullable=True)
-    gender = Column(String, nullable=True)
+    gender = Column(Enum(Gender), nullable=True)
     singles_skill = Column(Integer, nullable=False, default=0)
     doubles_skill = Column(Integer, nullable=False, default=0)
     avatar = Column(String, nullable=True)
@@ -56,7 +59,6 @@ class User(BaseModel):
             raise AssertionError('No phone number provided')
 
         if session.query(User).filter(User.phone_number == phone_number).scalar() is not None:
-            print(type(User))
             raise AssertionError('Phone number has already been registered') 
         
         if not str(phone_number).isdigit():
