@@ -36,7 +36,7 @@ def verify_otp():
             'error': 'Invalid OTP'
         }), 400
 
-    if not user.isValidOtp(otp_code):
+    if not user.have_valid_otp(otp_code):
         return jsonify({
             'error': 'Invalid OTP'
         }), 400
