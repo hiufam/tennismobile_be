@@ -1,7 +1,9 @@
 import base64, io, os
+from genericpath import isdir
 from uuid import uuid1
 
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import current_user, jwt_required
 from PIL import Image
 from sqlalchemy import null
 
@@ -10,17 +12,17 @@ from ..database import session
 
 verification = Blueprint('verification', __name__, url_prefix='/api/verification')
 
-@verification.post('/avatar')
-def verify_avatar():
-    phone_number = request.json['phone_number']
-    user = User.find_user_by_phonenumber(phone_number)
+@verification.post('/user-profile')
+@jwt_required()
+def verfiy_user_profile():
+    user : User = current_user
 
-    if not user:
-        return jsonify({
-            'error': 'User not found'
-        }), 404
-    
     avatar_string = request.json['avatar'] # Must be encoded in base64
+    full_name = request.json['full_name']
+    date_of_birth = request.json['date_of_birth']
+    gender = request.json['gender']
+    singles_skill = request.json['singles_skill']
+    doubles_skill = request.json['doubles_skill']
 
     if not avatar_string:
         return jsonify({
@@ -36,8 +38,9 @@ def verify_avatar():
         }), 400
 
     if user.avatar: # Remove avatar if exist
+        if os.path.exists(user.avatar):
             os.remove(user.avatar) 
-            user.avatar = null
+        user.avatar = null
     
     avatar.thumbnail(size=(128, 128)) # Reside image, keep ratio
     avatar_name = uuid1()
@@ -47,112 +50,23 @@ def verify_avatar():
     avatar.close()
 
     user.avatar = avatar_path # Add avatar path to user db
-    session.commit()
-
-    return jsonify(), 200
-
-@verification.post('/full-name')
-def verify_full_name():
-    phone_number = request.json['phone_number']
-    user = User.find_user_by_phonenumber(phone_number)
-
-    if not user:
-        return jsonify({
-            'error': 'User not found'
-        }), 404
-    
-    full_name = request.json['full_name']
-
     user.full_name = full_name
-    session.commit()
-
-    return jsonify({
-        'user': {
-            'phone_number': phone_number,
-            'full_name': full_name
-        }
-    }), 200
-
-@verification.post('/date-of-birth')
-def verify_date_of_birth():
-    phone_number = request.json['phone_number']
-    user = User.find_user_by_phonenumber(phone_number)
-
-    if not user:
-        return jsonify({
-            'error': 'User not found'
-        }), 404
-    
-    date_of_birth = request.json['date_of_birth']
     user.date_of_birth = date_of_birth
-    session.commit()
-
-    return jsonify({
-        'user': {
-            'phone_number': phone_number,
-            'date_of_birth': date_of_birth
-        }
-    }), 200
-
-@verification.post('/gender')
-def verify_gender():
-    phone_number = request.json['phone_number']
-    user = User.find_user_by_phonenumber(phone_number)
-
-    if not user:
-        return jsonify({
-            'error': 'User not found'
-        }), 404
-    
-    gender = request.json['gender']
     user.gender = gender
-    session.commit()
-
-    return jsonify({
-        'user': {
-            'phone_number': phone_number,
-            'gender': gender
-        }
-    }), 200
-
-@verification.post('/singles-skill')
-def verify_singles_skill():
-    phone_number = request.json['phone_number']
-    user = User.find_user_by_phonenumber(phone_number)
-
-    if not user:
-        return jsonify({
-            'error': 'User not found'
-        }), 404
-    
-    singles_skill = request.json['singles_skill']
     user.singles_skill = singles_skill
-    session.commit()
-
-    return jsonify({
-        'user': {
-            'phone_number': phone_number,
-            'singles_skill': singles_skill
-        }
-    }), 200
-
-@verification.post('/doubles-skill')
-def verify_doubles_skill():
-    phone_number = request.json['phone_number']
-    user = User.find_user_by_phonenumber(phone_number)
-
-    if not user:
-        return jsonify({
-            'error': 'User not found'
-        }), 404
-    
-    doubles_skill = request.json['doubles_skill']
     user.doubles_skill = doubles_skill
+    user.is_verify = user.verify()
+
     session.commit()
 
     return jsonify({
         'user': {
-            'phone_number': phone_number,
-            'doubles_skill': doubles_skill
+            'phone_number': user.phone_number,
+            'avatar': user.avatar,
+            'full_name': user.full_name,
+            'date_of_birth': user.date_of_birth,
+            'gender': user.gender.name,
+            'singles_skill': user.singles_skill,
+            'doubles_skill': user.doubles_skill,
         }
     }), 200

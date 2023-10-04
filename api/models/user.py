@@ -36,21 +36,14 @@ class User(BaseModel):
     is_verify = Column(Boolean, nullable=False, default=False)
 
     def __repr__(self):
-        return f'<UserID={self.id}FullName={self.full_name}>'
+        return f'<UserID={self.id} FullName={self.full_name}>'
     
-    @staticmethod
-    def find_user_by_phonenumber(phone_number : String):
-        user : User = session.query(User).filter(User.phone_number == phone_number).scalar()
-        session.commit()
-
-        return user
-
     def generate_otp(self, digits=6):
         otp = ''
         for _ in range(digits):
             otp += random.choice(string.digits)
 
-        self.registration_otp_expiration = datetime.datetime.now() + datetime.timedelta(seconds=1)
+        self.registration_otp_expiration = datetime.datetime.now() + datetime.timedelta(seconds=120)
         self.registration_otp = otp
 
         session.commit()
@@ -59,6 +52,9 @@ class User(BaseModel):
     
     def have_valid_otp(self, otp_code):
         return self.registration_otp_expiration > datetime.datetime.now() and otp_code == self.registration_otp
+
+    def verify(self):
+        return not(self.phone_number is None or self.full_name is None or self.date_of_birth is None or self.gender is None or self.singles_skill is None or self.doubles_skill is None)
 
     @validates('phone_number')
     def validate_phone_number(self, key, phone_number):
@@ -75,7 +71,6 @@ class User(BaseModel):
             raise ValueError('Phone number requires 10 digits') 
         
         return phone_number
-
 
     # @validates('facebook_account')
     # def validate_facebook_account(self, key, facebook_account):
@@ -129,17 +124,17 @@ class User(BaseModel):
         if not singles_skill:
             raise AssertionError('No singles skill provided')
         
-        if singles_skill < 1 and singles_skill > 10:
+        if singles_skill < 1 or singles_skill > 10:
             raise ValueError('Singles skill can only range from 1 to 10')
         
         return singles_skill
         
     @validates('doubles_skill')
-    def validate_singles_skill(self, key, doubles_skill):
+    def validate_doubles_skill(self, key, doubles_skill):
         if not doubles_skill:
             raise AssertionError('No doubles skill provided')
         
-        if doubles_skill < 1 and doubles_skill > 10:
+        if doubles_skill < 1 or doubles_skill > 10:
             raise ValueError('doubles skill can only range from 1 to 10')
         
         return doubles_skill

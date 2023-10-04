@@ -32,73 +32,23 @@ response = requests.post(url=BASE + 'api/auth/otp/verify', json=my_otp)
 
 print(response.json())
 
-"""Testing avatar verification"""
+"""Testing verification"""
 
 with open('test1.jpg', 'rb') as f:
     im_bytes = f.read()        
 
 im_b64 = base64.b64encode(im_bytes).decode("utf8")
 
-user_avatar = {
+user_profile = {
     'phone_number': '1212231114',
+    'full_name': 'Hieu Pham',
+    'date_of_birth': '01/01/2000',
+    'gender': 'MALE',
+    'singles_skill': 1,
+    'doubles_skill': 10,
     'avatar': im_b64,
 }
 
-response = requests.post(BASE + '/api/verification/avatar',  json=user_avatar)
-
-print(response.json())
-
-"""Testing full name verification"""
-
-user_full_name = {
-    'phone_number': '1212231114',
-    'full_name': 'Hieu Pham',
-}
-
-response = requests.post(BASE + '/api/verification/full-name',  json=user_full_name)
-
-print(response.json())
-
-"""Testing date of birth verification"""
-
-user_date_of_birth = {
-    'phone_number': '1212231114',
-    'date_of_birth': '01/01/2000',
-}
-
-response = requests.post(BASE + '/api/verification/date-of-birth',  json=user_date_of_birth)
-
-print(response.json())
-
-"""Testing gender verification"""
-
-user_gender = {
-    'phone_number': '1212231114',
-    'gender': 'MALE',
-}
-
-response = requests.post(BASE + '/api/verification/gender',  json=user_gender)
-
-print(response.json())
-
-"""Testing singles skill verification"""
-
-user_singles_skill = {
-    'phone_number': '1212231114',
-    'singles_skill': 1,
-}
-
-response = requests.post(BASE + '/api/verification/singles-skill',  json=user_singles_skill)
-
-print(response.json())
-
-"""Testing doubles skill verification"""
-
-user_doubles_skill = {
-    'phone_number': '1212231114',
-    'doubles_skill': 10,
-}
-
-response = requests.post(BASE + '/api/verification/doubles-skill',  json=user_doubles_skill)
+response = requests.post(BASE + '/api/verification/user-profile',  json=user_profile)
 
 print(response.json())

@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import create_access_token
 
 from ..models.user import User
 from ..database import session
@@ -40,9 +41,12 @@ def verify_otp():
         return jsonify({
             'error': 'Invalid OTP'
         }), 400
+    
+    access_token = create_access_token(identity=user.phone_number)
 
     return jsonify({
         'user': {
-            'phone_number': user.phone_number
+            'phone_number': user.phone_number,
+            'access_token': access_token,
         }
     }), 200
