@@ -1,5 +1,4 @@
 import base64, io, os
-from genericpath import isdir
 from uuid import uuid1
 
 from flask import Blueprint, request, jsonify
@@ -7,12 +6,13 @@ from flask_jwt_extended import current_user, jwt_required
 from PIL import Image
 from sqlalchemy import null
 
+from ..middlewares import user_lookup_callback
 from ..models.user import User
 from ..database import session
 
 verification = Blueprint('verification', __name__, url_prefix='/api/verification')
 
-@verification.post('/user-profile')
+@verification.post('/')
 @jwt_required()
 def verfiy_user_profile():
     user : User = current_user

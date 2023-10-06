@@ -49,6 +49,6 @@ user_profile = {
     'avatar': im_b64,
 }
 
-response = requests.post(BASE + '/api/verification/user-profile',  json=user_profile)
+response = requests.post(BASE + '/api/verification/',  json=user_profile)
 
 print(response.json())
