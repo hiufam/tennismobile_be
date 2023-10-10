@@ -55,7 +55,6 @@ def verfiy_user_profile():
     user.gender = gender
     user.singles_skill = singles_skill
     user.doubles_skill = doubles_skill
-    user.is_verify = user.verify()
 
     session.commit()
 

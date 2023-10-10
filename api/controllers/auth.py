@@ -44,6 +44,9 @@ def verify_otp():
     
     access_token = create_access_token(identity=user.phone_number)
 
+    user.is_verify = True
+    session.commit()
+
     return jsonify({
         'user': {
             'phone_number': user.phone_number,

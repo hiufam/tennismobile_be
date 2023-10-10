@@ -91,6 +91,9 @@ class User(BaseModel):
     
     @validates('full_name')
     def validate_username(self, key, full_name):
+        if self.is_verify == False:
+            raise ValueError('User must be verified')
+
         if not full_name or not len(full_name) > 0:
             raise AssertionError('No full_name provided')
         
@@ -98,6 +101,9 @@ class User(BaseModel):
         
     @validates('date_of_birth')
     def validate_date_of_birth(self, key, date_of_birth):
+        if self.is_verify == False:
+            raise ValueError('User must be verified')
+
         if not date_of_birth:
             raise AssertionError('No date of birth provided')
         
@@ -111,6 +117,9 @@ class User(BaseModel):
 
     @validates('gender')
     def validate_gender(self, key, gender):
+        if self.is_verify == False:
+            raise ValueError('User must be verified')
+
         if not gender:
             raise AssertionError('No gender provided')
         
@@ -121,6 +130,9 @@ class User(BaseModel):
         
     @validates('singles_skill')
     def validate_singles_skill(self, key, singles_skill):
+        if self.is_verify == False:
+            raise ValueError('User must be verified')
+
         if not singles_skill:
             raise AssertionError('No singles skill provided')
         
@@ -131,6 +143,9 @@ class User(BaseModel):
         
     @validates('doubles_skill')
     def validate_doubles_skill(self, key, doubles_skill):
+        if self.is_verify == False:
+            raise ValueError('User must be verified')
+
         if not doubles_skill:
             raise AssertionError('No doubles skill provided')
         
@@ -141,6 +156,9 @@ class User(BaseModel):
     
     @validates('avatar')
     def validate_avatar(self, key, avatar):
+        if self.is_verify == False:
+            raise ValueError('User must be verified')
+
         if not avatar:
             raise AssertionError('No avatar provided')
         
