@@ -31,7 +31,7 @@ def upgrade() -> None:
         sa.Column('gender', sa.Enum(Gender), nullable=True),
         sa.Column('singles_skill', sa.Integer, nullable=False, default=0),
         sa.Column('doubles_skill', sa.Integer, nullable=False, default=0),
-        sa.Column('avatar', sa.String, nullable=True),
+        sa.Column('avatar_id', sa.String, nullable=True),
         sa.Column('registration_otp', sa.String, nullable=True),
         sa.Column('registration_otp_expiration', sa.DateTime, nullable=True),
         sa.Column('is_verify', sa.Boolean, nullable=False, default=False),
