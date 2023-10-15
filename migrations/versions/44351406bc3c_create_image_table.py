@@ -22,7 +22,7 @@ def upgrade() -> None:
     op.create_table(
         'images',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column('base64', sa.LargeBinary, nullable=False)
+        sa.Column('url', sa.String, nullable=False)
     )
 
 

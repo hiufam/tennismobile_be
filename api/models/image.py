@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, LargeBinary
+from sqlalchemy import Column, Integer, String
 
 from api.models import BaseModel
 
@@ -8,7 +8,7 @@ class Image(BaseModel):
     __tablename__ ='images'
 
     id = Column(Integer, primary_key=True)
-    base64 = Column(LargeBinary, nullable=False)
+    url = Column(String, nullable=False)
 
     def __repr__(self):
         return f'<Image:{self.id}>'

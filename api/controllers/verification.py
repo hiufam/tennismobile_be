@@ -1,56 +1,16 @@
-import base64, io, os
-from uuid import uuid1
-
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import current_user, jwt_required
+from flask_jwt_extended import jwt_required, get_jwt
 
-from ..middlewares import user_lookup_callback
+from ..middlewares import get_current_user
 from ..models.user import User
-from ..models.image import Image
 from ..database import session
 
 verification = Blueprint('verification', __name__, url_prefix='/api/verification')
 
-@verification.post('/images') # might need seperation
-@jwt_required()
-def upload_image():
-    user : User = current_user
-    image_file = request.files['image'] #form-data
-
-    if not Image.allowed_image(image_file.filename):
-        return jsonify({
-            'error': 'Invalid image file'
-        }), 400
-
-    image_base64 = base64.b64encode(image_file.read())
-
-    new_image = Image(
-        base64=image_base64
-    )
-
-    # check if user already have avatar
-    if user.avatar_id:
-        image_id = int(user.avatar_id)
-        new_image = session.query(Image).filter(Image.id == image_id).scalar()
-
-        new_image.base64 = image_base64
-
-    else:
-        session.add(new_image)
-    
-    session.commit()
-
-    return jsonify({
-        'image': {
-            'image_id': new_image.id,
-            'user_id': user.id,
-        }
-    }), 200
-
 @verification.post('/')
 @jwt_required()
 def verfiy_user_profile():
-    user : User = current_user
+    user : User = get_current_user(get_jwt())
 
     avatar_id = request.json['image_id']
     full_name = request.json['full_name']
