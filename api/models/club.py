@@ -1,5 +1,5 @@
 from sqlalchemy.orm import validates, relationship
-from sqlalchemy import Column, Date, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String
 
 from ..models import BaseModel
 
