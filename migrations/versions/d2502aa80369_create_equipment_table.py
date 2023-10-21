@@ -10,6 +10,8 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
+from api.models.user_equipment import Backhand, Forehand, DominatHand, ClothingSize
+
 
 # revision identifiers, used by Alembic.
 revision: str = 'd2502aa80369'
@@ -20,21 +22,22 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'equipments',
+        'user_equipments',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id')),
-        sa.Column('racket_brand', sa.String),
-        sa.Column('racket_parameter', sa.String),
-        sa.Column('racket_string', sa.String),
-        sa.Column('backhand', sa.String),
-        sa.Column('forehand', sa.String),
-        sa.Column('dominant_hand', sa.String),
-        sa.Column('ball_brand', sa.String),
-        sa.Column('clothing_brand', sa.String),
-        sa.Column('clothing_size', sa.String),
-        sa.Column('shoes_brand', sa.String),
-        sa.Column('shoes_size', sa.String),
+        sa.Column('backhand', sa.Enum(Backhand)),
+        sa.Column('forehand', sa.Enum(Forehand)),
+        sa.Column('dominant_hand', sa.Enum(DominatHand)),
+        sa.Column('clothing_size', sa.Enum(ClothingSize)),
+        sa.Column('shoes_size', sa.Integer),
+
+        sa.Column('racket_brand_id', sa.Integer),
+        sa.Column('racket_parameter_id', sa.Integer),
+        sa.Column('racket_string_id', sa.Integer),
+        sa.Column('ball_brand_id', sa.Integer),
+        sa.Column('clothing_brand_id', sa.Integer),
+        sa.Column('shoes_brand_id', sa.Integer),
     )
 
 def downgrade() -> None:
-    op.drop_table('equipments')
+    op.drop_table('user_equipments')

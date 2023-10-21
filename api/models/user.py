@@ -33,7 +33,7 @@ class User(BaseModel):
 
     # relationship
     # club = relationship('Club', back_populates='users')
-    equipment = relationship('Equipment', back_populates='user')
+    user_equipment = relationship('UserEquipment', back_populates='user')
 
     def __repr__(self):
         return f'<UserID={self.id} FullName={self.full_name}>'
