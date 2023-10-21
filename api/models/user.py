@@ -1,11 +1,9 @@
-import datetime, re, random, string, enum, os
-from uuid import uuid1
+import datetime, re, random, string, enum
 
 from sqlalchemy.orm import validates, relationship
 from sqlalchemy import Column, Date, ForeignKey, Integer, String, DateTime, Boolean, Enum, null
-from PIL import Image
 
-from ..database import engine, session
+from ..database import session
 from ..models import BaseModel
 
 class Gender(enum.Enum):
@@ -18,6 +16,7 @@ class User(BaseModel):
     __tablename__ ='users'
 
     id = Column(Integer, primary_key=True)
+    # club_id = Column(Integer, ForeignKey('clubs.id'))
     phone_number = Column(String(10), nullable=False, unique=True)
     facebook_account = Column(String(50), nullable=True)
     google_account = Column(String(50), nullable=True)
@@ -27,13 +26,14 @@ class User(BaseModel):
     singles_skill = Column(Integer, nullable=False, default=0)
     doubles_skill = Column(Integer, nullable=False, default=0)
     avatar_id = Column(String, nullable=True)
-    # club_id = Column(Integer, ForeignKey('clubs.id'))
-
-    # club = relationship('Club', back_populates='users')
     
     registration_otp = Column(String, nullable=True)
     registration_otp_expiration = Column(DateTime, nullable=True)
     is_verify = Column(Boolean, nullable=False, default=False)
+
+    # relationship
+    # club = relationship('Club', back_populates='users')
+    user_equipment = relationship('UserEquipment', back_populates='user')
 
     def __repr__(self):
         return f'<UserID={self.id} FullName={self.full_name}>'
@@ -69,22 +69,22 @@ class User(BaseModel):
         
         return phone_number
 
-    # @validates('facebook_account')
-    # def validate_facebook_account(self, key, facebook_account):
-    #     if not facebook_account:
-    #         raise AssertionError('No facebook account provided')
+    @validates('facebook_account')
+    def validate_facebook_account(self, key, facebook_account):
+        if not facebook_account:
+            raise AssertionError('No facebook account provided')
         
-    #     return facebook_account
+        return facebook_account
     
-    # @validates('google_account')
-    # def validate_email(self, key, google_account):
-    #     if not google_account:
-    #         raise AssertionError('No google account provided')
+    @validates('google_account')
+    def validate_email(self, key, google_account):
+        if not google_account:
+            raise AssertionError('No google account provided')
         
-    #     if not re.match("[^@]+@[^@]+\.[^@]+", google_account):
-    #         raise AssertionError('Provided google account is not an google account address') 
+        if not re.match("[^@]+@[^@]+\.[^@]+", google_account):
+            raise AssertionError('Provided google account is not an google account address') 
         
-    #     return google_account
+        return google_account
     
     @validates('full_name')
     def validate_username(self, key, full_name):
